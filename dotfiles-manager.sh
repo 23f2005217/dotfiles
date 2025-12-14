@@ -18,6 +18,9 @@ NC='\033[0m' # No Color
 # Configurations to manage
 CONFIGS=("niri" "rofi" "waybar")
 
+# Home configs to manage (files and directories from home)
+HOME_CONFIGS=(".zshrc" ".oh-my-zsh")
+
 # Function to print colored messages
 print_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
@@ -33,6 +36,26 @@ print_error() {
 
 print_warning() {
     echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+# Function to install dependencies
+install_dependencies() {
+    print_info "Installing dependencies..."
+    
+    # Install zsh-autosuggestions if not present
+    local zsh_suggestions="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+    if [ ! -d "$zsh_suggestions" ]; then
+        print_info "Installing zsh-autosuggestions..."
+        git clone https://github.com/zsh-users/zsh-autosuggestions "$zsh_suggestions" || {
+            print_error "Failed to install zsh-autosuggestions"
+            return 1
+        }
+        print_success "zsh-autosuggestions installed"
+    else
+        print_success "zsh-autosuggestions already installed"
+    fi
+    
+    print_success "Dependencies installed"
 }
 
 # Function to check if we're in the dotfiles directory
@@ -77,6 +100,22 @@ backup_configs() {
             print_success "$config backed up"
         else
             print_warning "$config not found in $CONFIG_DIR"
+        fi
+    done
+    
+    # Copy home configurations
+    print_info "Copying home configurations..."
+    for config in "${HOME_CONFIGS[@]}"; do
+        if [ -e "$HOME/$config" ]; then
+            print_info "Backing up $config..."
+            if [ -d "$HOME/$config" ]; then
+                rsync -av --delete "$HOME/$config/" "$DOTFILES_DIR/$config/" > /dev/null
+            else
+                cp "$HOME/$config" "$DOTFILES_DIR/$config"
+            fi
+            print_success "$config backed up"
+        else
+            print_warning "$config not found in $HOME"
         fi
     done
     
@@ -141,11 +180,40 @@ restore_configs() {
         fi
     done
     
+    # Restore home configurations
+    print_info "Restoring home configurations..."
+    for config in "${HOME_CONFIGS[@]}"; do
+        if [ -e "$DOTFILES_DIR/$config" ]; then
+            print_info "Restoring $config..."
+            
+            # Backup current config
+            if [ -e "$HOME/$config" ]; then
+                backup_path="$HOME/${config}.backup.$(date +%Y%m%d_%H%M%S)"
+                print_info "Creating backup at $backup_path"
+                cp -r "$HOME/$config" "$backup_path"
+            fi
+            
+            # Restore from dotfiles
+            if [ -d "$DOTFILES_DIR/$config" ]; then
+                rsync -av --delete "$DOTFILES_DIR/$config/" "$HOME/$config/" > /dev/null
+            else
+                cp "$DOTFILES_DIR/$config" "$HOME/$config"
+            fi
+            print_success "$config restored"
+        else
+            print_warning "$config not found in dotfiles"
+        fi
+    done
+    
+    # Install dependencies
+    install_dependencies
+    
     print_success "Restore completed from branch: $branch"
     print_info "Reloading niri config..."
     niri msg action load-config-file 2>/dev/null && print_success "Niri config reloaded" || print_warning "Could not reload niri config"
     print_info "Restarting waybar..."
-    pkill waybar && sleep 0.5 && nohup waybar > /dev/null 2>&1 & && print_success "Waybar restarted"
+    pkill waybar && sleep 0.5 && nohup waybar > /dev/null 2>&1 &
+    print_success "Waybar restarted"
 }
 
 # Function to push to remote
@@ -245,6 +313,16 @@ show_status() {
             echo -e "  ${RED}✗${NC} $config"
         fi
     done
+    
+    echo ""
+    print_info "Managed home configs:"
+    for config in "${HOME_CONFIGS[@]}"; do
+        if [ -e "$DOTFILES_DIR/$config" ]; then
+            echo -e "  ${GREEN}✓${NC} $config"
+        else
+            echo -e "  ${RED}✗${NC} $config"
+        fi
+    done
 }
 
 # Function to show help
@@ -258,6 +336,7 @@ ${YELLOW}Usage:${NC}
 ${YELLOW}Commands:${NC}
   ${GREEN}backup${NC} [branch] [message]     Backup configs to git (default: master)
   ${GREEN}restore${NC} [branch]              Restore configs from git (default: master)
+  ${GREEN}install${NC}                       Install dependencies (zsh plugins, etc.)
   ${GREEN}push${NC} [branch]                 Push current/specified branch to remote
   ${GREEN}pull${NC} [branch]                 Pull current/specified branch from remote
   ${GREEN}list-branches${NC}                 List all local and remote branches
@@ -296,6 +375,9 @@ ${YELLOW}Workflow:${NC}
 ${YELLOW}Managed Configurations:${NC}
 $(for config in "${CONFIGS[@]}"; do echo "  • $config"; done)
 
+${YELLOW}Managed Home Configurations:${NC}
+$(for config in "${HOME_CONFIGS[@]}"; do echo "  • $config"; done)
+
 EOF
 }
 
@@ -306,6 +388,9 @@ case "$1" in
         ;;
     restore)
         restore_configs "$2"
+        ;;
+    install)
+        install_dependencies
         ;;
     push)
         push_to_remote "$2"
