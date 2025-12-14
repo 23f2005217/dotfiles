@@ -96,7 +96,7 @@ backup_configs() {
     for config in "${CONFIGS[@]}"; do
         if [ -d "$CONFIG_DIR/$config" ]; then
             print_info "Backing up $config..."
-            rsync -av --delete "$CONFIG_DIR/$config/" "$DOTFILES_DIR/$config/" > /dev/null
+            rsync -av --delete --exclude='.git' "$CONFIG_DIR/$config/" "$DOTFILES_DIR/$config/" > /dev/null
             print_success "$config backed up"
         else
             print_warning "$config not found in $CONFIG_DIR"
@@ -109,7 +109,9 @@ backup_configs() {
         if [ -e "$HOME/$config" ]; then
             print_info "Backing up $config..."
             if [ -d "$HOME/$config" ]; then
-                rsync -av --delete "$HOME/$config/" "$DOTFILES_DIR/$config/" > /dev/null
+                rsync -av --delete --exclude='.git' "$HOME/$config/" "$DOTFILES_DIR/$config/" > /dev/null
+                # Remove any .git directories that might exist
+                find "$DOTFILES_DIR/$config" -name '.git' -type d -exec rm -rf {} + 2>/dev/null || true
             else
                 cp "$HOME/$config" "$DOTFILES_DIR/$config"
             fi
