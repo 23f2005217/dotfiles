@@ -1,0 +1,249 @@
+* {
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  font-family: JetBrainsMono Nerd Font;
+  font-size: 13px;
+}
+
+window#waybar {
+  background-color: rgba(10, 10, 15, 0.95);
+  border-bottom: 2px solid #00ffff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  transition-property: background-color;
+  transition-duration: 0.5s;
+}
+
+window#waybar.hidden {
+  opacity: 0.5;
+}
+
+#workspaces {
+  background-color: transparent;
+}
+
+#workspaces button {
+  all: initial;
+  min-width: 0;
+  box-shadow: inset 0 -3px transparent;
+  padding: 6px 18px;
+  margin: 6px 3px;
+  border-radius: 0;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 255, 136, 0.1));
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  color: #00ffff;
+  transition: all 0.3s ease;
+}
+
+#workspaces button.active {
+  background: linear-gradient(135deg, #00ffff, #00ff88);
+  color: #0a0a0f;
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+  font-weight: bold;
+}
+
+#workspaces button:hover {
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 255, 136, 0.3));
+  border: 1px solid #00ff88;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+#workspaces button.urgent {
+  background-color: #f38ba8;
+}
+
+#memory,
+#cpu,
+#custom-clipboard,
+#custom-wifi,
+#network,
+#custom-bluetooth,
+#mpris,
+#custom-power,
+#battery,
+#backlight,
+#wireplumber,
+#network,
+#clock,
+#tray {
+  border-radius: 0;
+  margin: 6px 2px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), rgba(0, 255, 136, 0.15));
+  border: 1px solid rgba(0, 255, 255, 0.4);
+  color: #00ffff;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+#memory:hover,
+#cpu:hover,
+#custom-clipboard:hover,
+#custom-wifi:hover,
+#network:hover,
+#custom-bluetooth:hover,
+#mpris:hover,
+#custom-power:hover,
+#battery:hover,
+#backlight:hover,
+#wireplumber:hover,
+#clock:hover,
+#tray:hover {
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.25), rgba(0, 255, 136, 0.25));
+  border: 1px solid #00ff88;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
+}
+
+#custom-power {
+  margin-right: 6px;
+}
+
+#custom-logo {
+  padding-right: 7px;
+  padding-left: 7px;
+  margin-left: 5px;
+  font-size: 15px;
+  border-radius: 0;
+  color: #00ffff;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
+#memory {
+  color: #00ff88;
+  border-color: rgba(0, 255, 136, 0.4);
+}
+
+#cpu {
+  color: #00ff88;
+  border-color: rgba(0, 255, 136, 0.4);
+}
+
+#battery {
+  color: #ffff00;
+  border-color: rgba(255, 255, 0, 0.4);
+}
+
+#battery.warning,
+#battery.critical,
+#battery.urgent {
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(255, 100, 0, 0.3));
+  color: #ff0000;
+  border-color: #ff0000;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+}
+
+#battery.charging {
+  color: #00ff88;
+  border-color: rgba(0, 255, 136, 0.6);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+#backlight {
+  color: #00ff88;
+  border-color: rgba(0, 255, 136, 0.4);
+}
+
+#wireplumber {
+  color: #00ffff;
+  border-color: rgba(0, 255, 255, 0.4);
+}
+
+#network {
+  color: #00ffff;
+  border-color: rgba(0, 255, 255, 0.4);
+  padding-right: 14px;
+}
+
+#custom-wifi.connected {
+  color: #00ff88;
+  border-color: rgba(0, 255, 136, 0.6);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+#custom-wifi.ethernet {
+  color: #00ffff;
+  border-color: rgba(0, 255, 255, 0.6);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+#custom-wifi.disconnected {
+  color: #00ffff;
+  border-color: rgba(0, 255, 255, 0.4);
+  opacity: 0.6;
+}
+
+#custom-wifi.wifi-off {
+  color: #666677;
+  border-color: rgba(102, 102, 119, 0.4);
+  opacity: 0.4;
+}
+
+#clock {
+  font-family: JetBrainsMono Nerd Font;
+  color: #00ffff;
+  border-color: rgba(0, 255, 255, 0.6);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+  font-weight: bold;
+}
+
+#custom-power {
+  color: #ff0000;
+  border-color: rgba(255, 0, 0, 0.6);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+#mpris {
+  color: #00ffff;
+  border-color: rgba(0, 255, 255, 0.5);
+}
+
+#mpris.paused {
+  color: #00ffff;
+  border-color: rgba(0, 255, 255, 0.5);
+  opacity: 0.7;
+}
+
+#mpris.stopped {
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  opacity: 0;
+}
+
+#custom-clipboard {
+  color: #00ff88;
+  border-color: rgba(0, 255, 136, 0.5);
+}
+
+#custom-bluetooth.bt-connected {
+  color: #00ffff;
+  border-color: rgba(0, 255, 255, 0.6);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+#custom-bluetooth.bt-disconnected {
+  color: #00ffff;
+  border-color: rgba(0, 255, 255, 0.4);
+  opacity: 0.6;
+}
+
+#custom-bluetooth.bt-off {
+  color: #666677;
+  border-color: rgba(102, 102, 119, 0.4);
+  opacity: 0.4;
+}
+
+tooltip {
+  border-radius: 0;
+  padding: 15px;
+  background: linear-gradient(135deg, rgba(10, 10, 15, 0.95), rgba(20, 20, 30, 0.95));
+  border: 2px solid rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+}
+
+tooltip label {
+  padding: 5px;
+  color: #00ffff;
+  background-color: transparent;
+}
